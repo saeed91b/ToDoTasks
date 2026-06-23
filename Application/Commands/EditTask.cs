@@ -3,6 +3,7 @@ using System.Runtime.CompilerServices;
 using Application.Core;
 using Application.DTOs;
 using AutoMapper;
+using FluentValidation;
 using MediatR;
 using Persistence;
 
@@ -15,10 +16,14 @@ public class EditTask
         public required EditTaskDTO TaskDTO { get; set; }
     }
 
-    public class Handler(DataContext context, IMapper mapper) : IRequestHandler<Command, Result<Unit>>
+    public class Handler(DataContext context, IMapper mapper, IValidator<Command> validator) : IRequestHandler<Command, Result<Unit>>
     {
         public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
         {
+            var validationResult = await validator.ValidateAsync(request, cancellationToken);
+
+            if (!validationResult.IsValid) return Result<Unit>.Failure(validationResult.ToString(), 400);
+
             var task = await context.ToDoTasks.FindAsync([request.TaskDTO.Id], cancellationToken);
 
             if (task is null) return Result<Unit>.Failure("Task not found!", 404);

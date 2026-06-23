@@ -3,6 +3,7 @@ using Application.Core;
 using Application.DTOs;
 using AutoMapper;
 using Domain;
+using FluentValidation;
 using MediatR;
 using Persistence;
 
@@ -15,10 +16,14 @@ public class CreateTask
         public required CreateTaskDTO TaskDTO { get; set; }
     }
 
-    public class Handler(DataContext context, IMapper mapper) : IRequestHandler<Command, Result<string>>
+    public class Handler(DataContext context, IMapper mapper, IValidator<Command> validator) : IRequestHandler<Command, Result<string>>
     {
         public async Task<Result<string>> Handle(Command request, CancellationToken cancellationToken)
         {
+            var validationResult = await validator.ValidateAsync(request, cancellationToken);
+
+            if (!validationResult.IsValid) return Result<string>.Failure(validationResult.ToString(), 400);
+
             var task = mapper.Map<ToDoTask>(request.TaskDTO);
 
             context.ToDoTasks.Add(task);

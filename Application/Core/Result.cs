@@ -9,7 +9,12 @@ public class Result<T>
     public string? Error { get; set; }
     public int Code { get; set; }
 
-    public static Result<T> Success(T value) => new() { IsSuccess = true, Value = value};
+    public static Result<T> Success(T value) => new() 
+    {   
+        Value = value, 
+        IsSuccess = true
+    };
+    
     public static Result<T> Failure(string error, int code) => new()
     {
         IsSuccess = false, 

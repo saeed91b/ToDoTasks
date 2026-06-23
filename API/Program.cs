@@ -1,5 +1,7 @@
 using Application.Core;
 using Application.Queries;
+using Application.Validators;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 
@@ -16,13 +18,14 @@ builder.Services.AddDbContext<DataContext>(opt =>
 builder.Services.AddMediatR(cfg =>
 {
     cfg.RegisterServicesFromAssemblyContaining<GetTasksList>();
-    cfg.LicenseKey = builder.Configuration["Licences:MediatR"];
 });
 
 builder.Services.AddAutoMapper(cfg =>
 {
     cfg.LicenseKey = builder.Configuration["Licences:MediatR"];
 }, typeof(MappingProfiles));
+
+builder.Services.AddValidatorsFromAssemblyContaining<CreateTaskValidator>();
 
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
