@@ -8,7 +8,7 @@ This is a basic .NET Web API app that performs CRUD operations allowing users to
    ```
 2. Restore the packages:
    ```
-   cd ToDoList
+   cd ToDoTasks
    dotnet restore
    ```
 3. Run it:
